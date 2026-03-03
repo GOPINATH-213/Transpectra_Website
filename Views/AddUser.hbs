@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Driver Details</title>
+  <link rel="icon" href="/pngtree-passenger-coach-bus-woodcut-png-image_10206746.png" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #f9fafb);
+      color: #1e293b;
+      display: block;
+      justify-content: center;
+      align-items: center;
+    }
+
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .login-container {
+      background: #ffffff;
+      padding: 25px 35px;
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .login-container h1 {
+      text-align: center;
+      margin-bottom: 22px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #475569;
+      font-size: 14px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-group input:focus {
+      border-color: #2563eb;
+      outline: none;
+      box-shadow: 0 0 6px rgba(37, 99, 235, 0.35);
+    }
+
+    .submit-button {
+      background-color: #2563eb;
+      color: #fff;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .submit-button:hover {
+      background-color: #1e40af;
+    }
+
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .View {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #475569;
+    }
+
+    .View a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .View a:hover {
+      text-decoration: underline;
+    }
+
+    .top-message {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 300px;
+      max-width: 500px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 10000;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top-message.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .top-message.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: inherit;
+      cursor: pointer;
+      padding-left: 12px;
+      transition: opacity 0.3s ease;
+    }
+
+    .close-btn:hover {
+      opacity: 0.7;
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 20px;
+      }
+
+      .login-container h1 {
+        font-size: 1.4rem;
+      }
+
+      .form-group input {
+        font-size: 14px;
+      }
+
+      .submit-button {
+        font-size: 14px;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  {{> navbar }}
+  <div id="top-message" class="top-message">
+    <span id="message-text"></span>
+    <button onclick="hideMessage()" class="close-btn">&times;</button>
+  </div>
+  <main>
+    <section class="login-container">
+      <h1>Add Driver Details</h1>
+      <form id="multiStepForm" action="/Auth/AddUser" method="post" enctype="multipart/form-data">
+        <!-- Step 1 -->
+        <div class="step {{#unless showSecondStep}}active{{/unless}}" id="step1">
+
+          <div class="form-group">
+            <label for="Driverphoto">Driver's Photo:</label>
+            <input type="file" id="Driverphoto" name="Driverphoto" required value="{{Driverphoto}}">
+          </div>
+
+          <div class="form-group">
+            <label for="DriverName">Driver's Name:</label>
+            <input type="text" id="DriverName" name="DriverName" required value="{{DriverName}}">
+          </div>
+
+          <div class="form-group">
+            <label for="LicenceNumber">Licence Number:</label>
+            <input type="text" id="LicenceNumber" name="LicenceNumber" required value="{{LicenceNumber}}">
+          </div>
+
+          <div class="form-group">
+            <label for="LicenceExpiryDate">Licence Expiry Date:</label>
+            <input type="date" id="LicenceExpiryDate" name="LicenceExpiryDate" required value="{{LicenceExpiryDate}}">
+          </div>
+
+          <div class="form-group">
+            <label for="ContactNumber">Contact Number:</label>
+            <input type="number" id="ContactNumber" maxlength="10" name="ContactNumber" required value="{{ContactNumber}}">
+          </div>
+
+          <div class="form-group">
+            <label for="AadharNumber">Aadhar Number:</label>
+            <input type="number" id="AadharNumber" maxlength="12" name="AadharNumber" required value="{{AadharNumber}}">
+          </div>
+
+          <div class="button-group">
+            <span></span>
+            <button type="button" class="submit-button" onclick="nextStep()">Next</button>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step {{#if showSecondStep}}active{{/if}}" id="step2">
+
+          <div class="form-group">
+            <label for="Uniqueid">Unique ID:</label>
+            <input type="text" id="Uniqueid" name="Uniqueid" value="{{Uniqueid}}" required>
+          </div>
+
+          <div class="form-group">
+            <label for="Password">Password:</label>
+            <input type="password" id="Password" name="Password" required>
+          </div>
+
+          <div class="form-group">
+            <label for="ConfirmPassword">Confirm Password:</label>
+            <input type="password" id="ConfirmPassword" name="ConfirmPassword" required>
+          </div>
+
+          <div class="button-group">
+            <button type="button" class="submit-button" onclick="prevStep()">Back</button>
+            <button type="submit" class="submit-button">Submit</button>
+          </div>
+        </div>
+      </form>
+
+      <p class="View">Do you want to view? <a href="/DriverDetails">View here</a>.</p>
+    </section>
+  </main>
+
+  <script>
+    function nextStep() {
+      document.getElementById("step1").classList.remove("active");
+      document.getElementById("step2").classList.add("active");
+    }
+
+    function prevStep() {
+      document.getElementById("step2").classList.remove("active");
+      document.getElementById("step1").classList.add("active");
+    }
+
+    document.getElementById("multiStepForm").addEventListener("submit", function (event) {
+      const pwd = document.getElementById("Password").value;
+      const confirmPwd = document.getElementById("ConfirmPassword").value;
+      if (pwd !== confirmPwd) {
+        alert("Passwords do not match!");
+        event.preventDefault();
+      }
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const hasMessage = "{{msg}}" !== "";
+      if (hasMessage) {
+        document.getElementById("step1").classList.remove("active");
+        document.getElementById("step2").classList.add("active");
+      }
+    });
+
+    const msg = "{{msg}}";
+    const type = "{{msg_type}}";
+
+    function hideMessage() {
+      document.getElementById("top-message").style.display = "none";
+    }
+
+    if (msg) {
+      const messageBox = document.getElementById("top-message");
+      const messageText = document.getElementById("message-text");
+
+      messageText.innerText = msg;
+      messageBox.classList.add(type === "Good" ? "success" : "error");
+      messageBox.style.display = "flex";
+
+      setTimeout(() => {
+        messageBox.style.display = "none";
+      }, 4000);
+    }
+  </script>
+</body>
+
+</html>

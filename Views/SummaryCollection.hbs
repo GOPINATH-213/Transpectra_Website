@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Summary Collection</title>
+  <link rel="icon" href="/pngtree-passenger-coach-bus-woodcut-png-image_10206746.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #f9fafb);
+      color: #1e293b;
+      scroll-behavior: smooth;
+    }
+
+    .page-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+      gap: 40px;
+    }
+
+    .Morningcontainer {
+      background: #fff;
+      padding: 30px;
+      width: 95%;
+      max-width: 1000px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-title {
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      color: #1e293b;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    thead {
+      background: #3164d2;
+      color: #fff;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    tr:nth-child(even) {
+      background: #f9fafb;
+    }
+
+    tr:hover {
+      transition: 0.3s ease;
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      text-align: center;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #fff;
+      transition: border 0.3s ease;
+    }
+
+    .remove-btn {
+      background: crimson;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .remove-btn:hover {
+      background: #a60e2d;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .buttons button {
+      background: #2563eb;
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .buttons button:hover {
+      background: #1e40af;
+      transform: translateY(-2px);
+    }
+
+    .bus-input {
+      text-transform: uppercase;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .top-message {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 300px;
+      max-width: 500px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 10000;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top-message.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .top-message.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: inherit;
+      cursor: pointer;
+      padding-left: 12px;
+    }
+
+    .close-btn:hover {
+      opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+      .buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .Morningcontainer,
+      .RouteTable {
+        padding: 18px;
+      }
+
+      table th,
+      table td {
+        font-size: 12px;
+        padding: 6px;
+      }
+
+      input {
+        font-size: 12px;
+        padding: 6px;
+      }
+    }
+
+    @media (max-width: 480px) {
+
+      .form-title,
+      .table-title {
+        font-size: 16px;
+      }
+
+      .buttons button,
+      .Add {
+        font-size: 12px;
+        padding: 6px 10px;
+      }
+
+      table th,
+      table td {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  {{> navbar}}
+  <div id="top-message" class="top-message">
+    <span id="message-text"></span>
+    <button onclick="hideMessage()" class="close-btn">&times;</button>
+  </div>
+  <main class="page-content">
+    <div class="Morningcontainer">
+      <h2 class="form-title">Summary Collection Form</h2>
+      <form id="submitSavedRoutes" action="/Auth/AddSummary" method="POST">
+        <table id="RouteTableReport">
+          <thead>
+            <tr>
+              <th style="width: 50px;">Index</th>
+              <th>Route</th>
+              <th style="width: 50px;">Remove</th>
+            </tr>
+          </thead>
+          <tbody id="formRowsMorning">
+            {{#each Print}}
+            <tr>
+              <td style="width: 50px;">
+                <input type="text" name="no[]" value="{{inc @index}}" readonly style="text-align: center;">
+              </td>
+              <td>
+                <input type="text" class="route-input" name="route[]" value="{{this.route}}" placeholder="Enter Route"
+                  required>
+              </td>
+              <td style="width: 50px;">
+                <button type="button" class="remove-btn" onclick="removeRow(this, 'formRowsMorning')">X</button>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+
+        </table>
+
+        <div class="buttons">
+          <button type="button" onclick="addRow('formRowsMorning')">Add Collection</button>
+          <button type="submit">Submit</button>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <script>
+    let rowCounters = { formRowsMorning: 1 };
+
+    function addRow(tableId) {
+      const table = document.getElementById(tableId);
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td style="width: 50px;">
+          <input type="text" name="no[]" value="${rowCounters[tableId]++}" readonly style="text-align: center;">
+        </td>
+        <td>
+          <input type="text" class="route-input" name="route[]" placeholder="Enter Route" required>
+        </td>
+        <td style="width: 50px;">
+          <button type="button" class="remove-btn" onclick="removeRow(this, '${tableId}')">X</button>
+        </td>
+      `;
+      table.appendChild(row);
+    }
+
+    function removeRow(button, tableId) {
+      button.closest('tr').remove();
+      updateRowNumbers(tableId);
+    }
+
+    function updateRowNumbers(tableId) {
+      const rows = document.querySelectorAll(`#${tableId} tr`);
+      rowCounters[tableId] = 1;
+      rows.forEach(row => {
+        const input = row.querySelector('input[name="no[]"]');
+        if (input) input.value = rowCounters[tableId]++;
+      });
+    }
+
+    window.onload = () => {
+      addRow('formRowsMorning');
+    };
+
+    const msg = "{{Msg}}";
+    const type = "{{Msg_type}}";
+
+    function hideMessage() {
+      document.getElementById("top-message").style.display = "none";
+    }
+
+    if (msg) {
+      const messageBox = document.getElementById("top-message");
+      const messageText = document.getElementById("message-text");
+
+      messageText.innerText = msg;
+      messageBox.classList.add(type === "Good" ? "success" : "error");
+      messageBox.style.display = "flex";
+
+      setTimeout(() => {
+        messageBox.style.display = "none";
+      }, 4000);
+    }
+  </script>
+</body>
+
+</html>

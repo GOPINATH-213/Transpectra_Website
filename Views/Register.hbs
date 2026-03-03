@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Page</title>
+    <link rel="icon" href="/pngtree-passenger-coach-bus-woodcut-png-image_10206746.png">
+    <style>
+        .RegisterBody {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+        }
+
+        .Register-container {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .Register-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            padding-right: 5px;
+        }
+
+        .Registerform-group {
+            margin-bottom: 15px;
+            padding-right: 15px;
+        }
+
+        .Registerform-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .Registerform-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .Registerform-group input:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .Register-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: grey;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .Register-btn:hover {
+            background-color: #007bff;
+        }
+
+        .sign-in-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .sign-in-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .sign-in-link a:hover {
+            text-decoration: underline;
+        }
+
+        .Error {
+            text-align: center;
+            color: red;
+        }
+
+        .Good {
+            text-align: center;
+            color: green;
+        }
+    </style>
+</head>
+
+<body class="RegisterBody" style="background-color: rgba(0, 0, 0, 0.5);">
+
+    <div class="Register-container">
+        <h1>Register</h1>
+        <form action="/Auth/Register" method="post">
+            <div class="Registerform-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="name" placeholder="Enter your username" required>
+            </div>
+            <div class="Registerform-group">
+                <label for="uniqueid">Unique ID</label>
+                <input type="text" id="uniqueid" name="uniqueid" placeholder="Enter your unique id" required>
+            </div>
+            <div class="Registerform-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <div class="Registerform-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password"
+                    required>
+            </div>
+
+            {{#if msg}}
+            <p class="{{msg_type}}">{{msg}}</p>
+            {{/if}}
+
+            <button type="submit" class="Register-btn">Register</button>
+        </form>
+        <p class="sign-in-link">Already signed in? <a href="/Login">Login here</a>.</p>
+    </div>
+</body>
+
+</html>

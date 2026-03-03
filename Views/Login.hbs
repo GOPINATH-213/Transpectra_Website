@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="icon" href="/pngtree-passenger-coach-bus-woodcut-png-image_10206746.png">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #f9fafb);
+      scroll-behavior: smooth;
+      color: #1e293b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background: #ffffff;
+      padding: 25px 35px;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-container h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #475569;
+    }
+
+    .form-group input {
+      width: 93%;
+      padding: 10px 12px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-group input:focus {
+      border-color: #2563eb;
+      outline: none;
+      box-shadow: 0 0 6px rgba(37, 99, 235, 0.35);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .login-btn:hover {
+      background-color: #1e40af;
+    }
+
+    .forgot-password {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #2563eb;
+      text-decoration: none;
+    }
+
+    .forgot-password:hover {
+      text-decoration: underline;
+    }
+
+    .sign-up-link {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #475569;
+    }
+
+    .sign-up-link a {
+      color: #2563eb;
+      text-decoration: none;
+    }
+
+    .sign-up-link a:hover {
+      text-decoration: underline;
+    }
+
+    .top-message {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 300px;
+      max-width: 500px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 10000;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top-message.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .top-message.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: inherit;
+      cursor: pointer;
+      padding-left: 12px;
+      transition: opacity 0.3s ease;
+    }
+
+    .close-btn:hover {
+      opacity: 0.7;
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 20px;
+      }
+
+      .login-container h1 {
+        font-size: 1.5rem;
+      }
+
+      .form-group input {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="top-message" class="top-message">
+    <span id="message-text"></span>
+    <button onclick="hideMessage()" class="close-btn">&times;</button>
+  </div>
+
+  <div class="login-container">
+    <h1>Login</h1>
+    <form action="/Auth/Login" method="post">
+      <div class="form-group">
+        <label for="uniqueid">Unique ID</label>
+        <input type="text" id="uniqueid" name="uniqueid" placeholder="Enter your Unique ID" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+      </div>
+
+      <button type="submit" class="login-btn">Login</button>
+    </form>
+    <a href="/ForgotPassword" class="forgot-password">Forgot Password?</a>
+    <!--<p class="sign-up-link">Not a Member ? <a href="/Register">Register here</a>.</p>-->
+  </div>
+
+  <script>
+    const msg = "{{msg}}";
+    const type = "{{msg_type}}";
+
+    function hideMessage() {
+      document.getElementById("top-message").style.display = "none";
+    }
+
+    if (msg) {
+      const messageBox = document.getElementById("top-message");
+      const messageText = document.getElementById("message-text");
+
+      messageText.innerText = msg;
+      messageBox.classList.add(type === "Good" ? "success" : "error");
+      messageBox.style.display = "flex";
+
+      setTimeout(() => {
+        messageBox.style.display = "none";
+      }, 4000);
+    }
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      history.pushState(null, null, location.href);
+      window.onpopstate = function () {
+        history.pushState(null, null, location.href);
+      };
+    });
+  </script>
+
+
+</body>
+
+</html>

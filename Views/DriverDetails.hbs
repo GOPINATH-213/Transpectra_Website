@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Details Table</title>
+    <link rel="icon" href="/pngtree-passenger-coach-bus-woodcut-png-image_10206746.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Inter", Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe, #f9fafb);
+            color: #1e293b;
+            scroll-behavior: smooth;
+        }
+
+        h1.h1 {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .table-container {
+            max-width: 1100px;
+            margin: 20px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #e0e0e0;
+            text-align: left;
+            padding: 12px;
+        }
+
+        table th {
+            background: #f7f9fb;
+            font-weight: 600;
+            color: #2c3e50;
+            cursor: pointer;
+        }
+
+        table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        table tbody tr:hover {
+            background: #f1f7ff;
+            transition: background 0.2s ease-in-out;
+        }
+
+        .Add {
+            display: block;
+            align-items: center;
+            gap: 8px;
+            background: #3498db;
+            color: #fff;
+            margin-left: auto;
+            margin-right: 10%;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: background 0.3s ease;
+            width: 100%;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .Add i {
+            font-size: 20px;
+        }
+
+        .Add:hover {
+            background: #2c80b4;
+        }
+
+        .Edit i {
+            color: #007bff;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .Delete i {
+            color: #e74c3c;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .View i {
+            color: #f39c12;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .Edit:hover i {
+            color: #0056b3;
+        }
+
+        .Delete:hover i {
+            color: #c0392b;
+        }
+
+        .View:hover i {
+            color: #d68910;
+        }
+
+        .photo {
+            width: 132px;
+            height: 170px;
+            border: 2px dashed #bbb;
+            border-radius: 10px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .top-message {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 300px;
+            max-width: 500px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .top-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: inherit;
+            cursor: pointer;
+            padding-left: 12px;
+            transition: opacity 0.3s ease;
+        }
+
+        .close-btn:hover {
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            h1.h1 {
+                font-size: 1.4rem;
+            }
+
+            .table-container {
+                padding: 15px;
+            }
+
+            table th,
+            table td {
+                font-size: 0.85rem;
+                padding: 8px;
+            }
+
+            .Add {
+                font-size: 0.85rem;
+                padding: 8px 14px;
+                margin: 15px auto;
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {{> navbar }}
+    <h1 class="h1">Driver Details Table</h1>
+    <a class="Add" href="/AddUser"><i class="fas fa-user-plus"></i> Add User</a>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Driver's Photo</th>
+                    <th>Driver's Name</th>
+                    <th>Unique ID</th>
+                    <th>Licence Number</th>
+                    <th>Licence Expiry Date</th>
+                    <th>Contact Number</th>
+                    <th>Aadhar Number</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each Print}}
+                <tr>
+                    <td>
+                        {{#if this.imageUrl}}
+                        <img src="{{this.imageUrl}}" alt="Driver Image" width="132" height="170"
+                            style="object-fit:cover; margin-right:5px;">
+                        {{else}}
+                        <div class="photo">No Image</div>
+                        {{/if}}
+                    </td>
+                    <td>{{this.Name}}</td>
+                    <td>{{this.UniqueID}}</td>
+                    <td>{{this.Licence_Number}}</td>
+                    <td>{{this.Licence_Expiry_Date}}</td>
+                    <td>{{this.Contact_Number}}</td>
+                    <td>{{this.Aadhar_Number}}</td>
+                    <td><a href="/EditUser/{{this.id}}" class="Edit"><i class="fas fa-edit"></i></a></td>
+                    <td><a href="/DeleteUser/{{this.id}}" class="Delete"
+                            onclick="return confirm('Are you sure to Delete?')"><i class="fas fa-trash-alt"></i></a>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const navEntries = performance.getEntriesByType("navigation");
+            if (navEntries.length > 0 && navEntries[0].type === "navigate") {
+                location.reload();
+            }
+        });
+    </script>
+
+
+</body>
+
+</html>

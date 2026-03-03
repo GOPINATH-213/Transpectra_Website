@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Route Collection</title>
+  <link rel="icon" href="/pngtree-passenger-coach-bus-woodcut-png-image_10206746.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #f9fafb);
+      color: #1e293b;
+      scroll-behavior: smooth;
+    }
+
+    .page-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+      gap: 40px;
+    }
+
+    .Morningcontainer,
+    .RouteTable {
+      background:#fff;
+      padding: 30px;
+      width: 95%;
+      max-width: 1000px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .form-title,
+    .table-title {
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      color: #1e293b;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    thead {
+      background:#3164d2;
+      color: #fff;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    th,
+    td {
+      padding: 12px 15px;
+      text-align: center;
+    }
+
+    tr:nth-child(even) {
+      background: #f9fafb;
+    }
+
+    tr:hover {
+      transition: 0.3s ease;
+    }
+
+    input[type="text"],
+    input[type="time"],
+    input[type="date"] {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #fff;
+      transition: border 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #2563eb;
+      outline: none;
+    }
+
+    .buttons{
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    #buttons{
+      display: inline-block;
+      justify-content:center;
+      gap: 12px;
+      width: 100%;
+      margin-top: 1%;
+    }
+
+    .buttons button,
+    .Add {
+      background: #2563eb;
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    #buttons button{
+      background: #2563eb;
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      width: 100%;
+    }
+
+    .buttons button:hover,
+    .Add:hover {
+      background: #1e40af;
+      transform: translateY(-2px);
+    }
+
+    #buttons button:hover{
+       background: #1e40af;
+      transform: translateY(-2px);
+    }
+
+    .remove-btn {
+      background: crimson;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .remove-btn:hover {
+      background: #a60e2d;
+    }
+
+    .suggestion-box {
+      display: none;
+      position: absolute;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+      max-height: 150px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    .suggestion-box li {
+      padding: 6px 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .suggestion-box li:hover {
+      background: #f1f5f9;
+    }
+
+    .top-message {
+      display: none;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      min-width: 300px;
+      max-width: 500px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 10000;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top-message.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .top-message.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: inherit;
+      cursor: pointer;
+      padding-left: 12px;
+      transition: opacity 0.3s ease;
+    }
+
+
+    @media (max-width: 768px) {
+      .buttons,
+      #buttons {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .Morningcontainer,
+      .RouteTable {
+        padding: 18px;
+      }
+
+      table th,
+      table td {
+        font-size: 12px;
+        padding: 6px;
+      }
+
+      input {
+        font-size: 12px;
+        padding: 6px;
+      }
+
+    }
+
+    @media (max-width: 480px) {
+
+      .form-title,
+      .table-title {
+        font-size: 16px;
+      }
+
+      .buttons button,
+      .Add,
+      #buttons button {
+        font-size: 12px;
+        padding: 6px 10px;
+      }
+
+      table th,
+      table td {
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  {{> navbar}}
+  <div id="top-message" class="top-message">
+    <span id="message-text"></span>
+    <button onclick="hideMessage()" class="close-btn">&times;</button>
+  </div>
+
+<div id="buttons">
+  <button onclick="location.href='/AddRouteUsingImg'">Upload images to add Routes</button>
+</div>
+
+  <main class="page-content">
+    <div class="Morningcontainer">
+      <h2 class="form-title">In-time Route Collection Form</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>S.No</th>
+            <th>Bus</th>
+            <th>Route</th>
+            <th>Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="formRowsMorning"></tbody>
+      </table>
+      <div class="buttons">
+        <button type="button" onclick="addRow('formRowsMorning')">Add Collection</button>
+        <button type="button" onclick="saveData()">Save</button>
+        <a style="text-align: center;" href="/Summary" class="Add">Add Summary</a>
+        <button type="button" onclick="retriveData()">Retrive</button>
+      </div>
+    </div>
+
+    <div class="RouteTable">
+      <h2 class="table-title">Saved Routes</h2>
+      <form id="submitSavedRoutes" action="/Auth/AddRoute" method="POST">
+        <input type="hidden" name="session" value="morning">
+        <label for="savedDate"><strong>Date:</strong></label>
+        <input type="date" id="savedDate" name="date" required>
+        <table id="RouteTableReport">
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Bus</th>
+              <th>Route</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody id="savedRoutesTable"></tbody>
+        </table>
+        <div class="buttons">
+          <button type="button" onclick="askDownloadType()">Download</button>
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <div class="suggestion-box" id="suggestionBox">
+    <summary><strong>Select Routes Collection</strong></summary>
+    <ul>
+      {{#each Print}}
+      <li data-value="{{this.route}}">{{this.route}}</li>
+      {{/each}}
+    </ul>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'savedMorningRoutes';
+    let rowCounters = { formRowsMorning: 1 };
+    let savedRoutes = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+    window.onload = function () {
+      renderSavedTable();
+      clearFormRows();
+    };
+
+    function addRow(tableId) {
+      const table = document.getElementById(tableId);
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td style="width: 50px;"><input type="text" name="no[]" value="${rowCounters[tableId]++}" readonly style="text-align: center;"></td> 
+        <td style="width: 50px;"><input type="text" class="bus-input" name="bus[]" placeholder="Bus" required oninput="this.value = this.value.toUpperCase()"></td>
+        <td><input type="text" class="route-input" name="route[]" placeholder="Route" required></td>
+        <td style="width: 50px;"><input type="time" class="time-input" name="time[]" required></td>
+        <td style="width: 50px;"><button type="button" class="remove-btn" onclick="removeRow(this, '${tableId}')">X</button></td>
+      `;
+      table.appendChild(row);
+    }
+
+    function removeRow(button, tableId) {
+      button.closest('tr').remove();
+      updateRowNumbers(tableId);
+    }
+
+    function updateRowNumbers(tableId) {
+      const rows = document.querySelectorAll(`#${tableId} tr`);
+      rowCounters[tableId] = 1;
+      rows.forEach(row => {
+        row.querySelector('input[name="no[]"]').value = rowCounters[tableId]++;
+      });
+    }
+
+    function saveData() {
+      const rows = document.querySelectorAll('#formRowsMorning tr');
+      const date = new Date().toISOString().split('T')[0];
+      savedRoutes = [];
+      rows.forEach(row => {
+        const bus = row.querySelector('.bus-input')?.value.trim();
+        const route = row.querySelector('.route-input')?.value.trim();
+        const time = row.querySelector('.time-input')?.value;
+        if (bus && route && time) {
+          savedRoutes.push({ bus, route, time, date });
+        }
+      });
+      document.getElementById('savedDate').value = date;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(savedRoutes));
+      renderSavedTable();
+      clearFormRows();
+    }
+
+    function renderSavedTable() {
+      const tbody = document.getElementById('savedRoutesTable');
+      tbody.innerHTML = '';
+      if (savedRoutes.length > 0) {
+        document.getElementById('savedDate').value = savedRoutes[0].date;
+      }
+      savedRoutes.forEach((route, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input type="hidden" name="no[]" value="${index + 1}">${index + 1}</td>
+          <td><input type="hidden" name="bus[]" value="${route.bus.toUpperCase()}">${route.bus.toUpperCase()}</td>
+          <td><input type="hidden" name="route[]" value="${route.route}">${route.route}</td>
+          <td><input type="hidden" name="time[]" value="${route.time}">${formatTo12Hour(route.time)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function clearFormRows() {
+      const tbody = document.getElementById('formRowsMorning');
+      tbody.innerHTML = '';
+      rowCounters.formRowsMorning = 1;
+      addRow('formRowsMorning');
+    }
+
+    function retriveData() {
+      clearFormRows();
+      savedRoutes.forEach((route, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><input type="text" name="no[]" value="${index + 1}" readonly></td>
+          <td><input type="text" class="bus-input" name="bus[]" value="${route.bus}" required></td>
+          <td><input type="text" class="route-input" name="route[]" value="${route.route}" required></td>
+          <td><input type="time" class="time-input" name="time[]" value="${route.time}" required></td>
+          <td><button type="button" class="remove-btn" onclick="removeRow(this, 'formRowsMorning')">X</button></td>
+        `;
+        document.getElementById('formRowsMorning').appendChild(row);
+      });
+      savedRoutes = [];
+      localStorage.removeItem(STORAGE_KEY);
+      document.getElementById('savedRoutesTable').innerHTML = '';
+      document.getElementById('savedDate').value = '';
+    }
+
+    function formatTo12Hour(time24) {
+      if (!time24) return '';
+      const [hour, minute] = time24.split(':');
+      const h = parseInt(hour, 10);
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      const hour12 = h % 12 || 12;
+      return `${hour12}:${minute} ${ampm}`;
+    }
+
+    function askDownloadType() {
+      const type = prompt("Which type do you want to download? (Type 'pdf' or 'excel')")?.toLowerCase();
+      if (type === 'pdf') {
+        exportToPDF();
+      } else if (type === 'excel') {
+        exportToExcel();
+      } else if (type) {
+        alert("Invalid choice! Please type 'pdf' or 'excel'.");
+      }
+    }
+
+    async function exportToPDF() {
+      const { jsPDF } = window.jspdf;
+      const date = document.getElementById("savedDate").value || new Date().toISOString().split('T')[0];
+      const table = document.getElementById("RouteTableReport");
+      const canvas = await html2canvas(table, { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "pt",
+        format: "a4"
+      });
+
+      pdf.setFontSize(14);
+      pdf.text("Route Collection Report", 40, 40);
+      pdf.setFontSize(12);
+      pdf.text(`Date: ${date}`, 40, 60);
+
+      const imgProps = pdf.getImageProperties(imgData);
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pdfWidth = pageWidth - 80;
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      const startY = 80;
+      pdf.addImage(imgData, 'PNG', 40, startY, pdfWidth, pdfHeight);
+      pdf.save(`RouteCollection_${date || 'report'}.pdf`);
+    }
+
+
+    function exportToExcel() {
+      const table = document.getElementById('RouteTableReport');
+      const date = document.getElementById("savedDate").value;
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.table_to_sheet(table);
+      XLSX.utils.sheet_add_aoa(ws, [[`Date: ${date}`]], { origin: "A1" });
+      XLSX.utils.book_append_sheet(wb, ws, "Route Collection Report");
+      XLSX.writeFile(wb, `RouteCollection_${date || 'report'}.xlsx`);
+    }
+
+    const suggestionBox = document.getElementById("suggestionBox");
+    let currentRouteInput = null;
+
+    document.addEventListener("mouseover", (e) => {
+      if (e.target.classList.contains("route-input")) {
+        currentRouteInput = e.target;
+        const rect = e.target.getBoundingClientRect();
+        suggestionBox.style.top = (window.scrollY + rect.bottom + 5) + "px";
+        suggestionBox.style.left = (window.scrollX + rect.left) + "px";
+        suggestionBox.style.display = "block";
+      } else if (!suggestionBox.contains(e.target)) {
+        suggestionBox.style.display = "none";
+      }
+    });
+
+    suggestionBox.querySelectorAll("li").forEach(item => {
+      item.addEventListener("click", () => {
+        if (currentRouteInput) {
+          const value = item.getAttribute("data-value");
+          let current = currentRouteInput.value.split(',').map(v => v.trim()).filter(Boolean);
+          if (!current.includes(value)) {
+            current.push(value);
+            currentRouteInput.value = current.join(', ');
+          }
+        }
+      });
+    });
+
+  </script>
+  <script>
+    const msg = "{{Msg}}";
+    const type = "{{Msg_type}}";
+
+    function hideMessage() {
+      document.getElementById("top-message").style.display = "none";
+    }
+
+    if (msg) {
+      const messageBox = document.getElementById("top-message");
+      const messageText = document.getElementById("message-text");
+
+      messageText.innerText = msg;
+      messageBox.classList.add(type === "Good" ? "success" : "error");
+      messageBox.style.display = "flex";
+
+      setTimeout(() => {
+        messageBox.style.display = "none";
+      }, 4000);
+    }
+  </script>
+</body>
+
+</html>

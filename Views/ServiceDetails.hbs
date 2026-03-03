@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Service Details</title>
+  <link rel="icon" href="/pngtree-passenger-coach-bus-woodcut-png-image_10206746.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #f9fafb);
+      color: #1e293b;
+      line-height: 1.5;
+    }
+
+    .page-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .container {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      width: 95%;
+      max-width: 1100px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+      overflow-x: auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+
+    th,
+    td {
+      border: 1px solid #e2e8f0;
+      padding: 12px 10px;
+      text-align: center;
+    }
+
+    th {
+      background: #334155;
+      color: #f1f5f9;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    tr:hover {
+      background: #f1f5f9;
+      transition: background 0.3s ease;
+    }
+
+    tfoot td {
+      font-weight: bold;
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    .back {
+      display: inline-block;
+      margin: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 25px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      background: #ffffff;
+      color: #475569;
+      box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+      transition: all 0.3s ease, transform 0.2s ease;
+      animation: bounceUp 2s infinite;
+    }
+
+    .back:hover {
+      background: #f8fafc;
+      transform: translateY(-4px) scale(1.02);
+    }
+
+    .back:active {
+      transform: scale(0.95);
+    }
+
+    #download {
+      background: #16a34a;
+      color: #fff;
+      font-weight: 600;
+      margin-left: auto;
+      margin-right: 20px;
+      box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3);
+      transition: all 0.3s ease, transform 0.2s ease;
+      animation: bounceUp 2s infinite;
+      margin-left: 77%;
+    }
+
+    #download:hover {
+      background: #22c55e;
+      transform: translateY(-4px) scale(1.05);
+    }
+
+    @keyframes bounceUp {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    .photo {
+      width: 120px;
+      height: 160px;
+      border: 2px dashed #94a3b8;
+      border-radius: 10px;
+      background-color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #b91c1c;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+      }
+
+      table {
+        font-size: 0.85rem;
+      }
+
+      th,
+      td {
+        padding: 8px;
+      }
+
+      .back,
+      #download {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  {{> navbar }}
+
+  {{#if busId}}
+  <a href="/ViewBus/{{busId}}" class="back"> ⬅️ Back </a>
+  {{/if}}
+
+  <button onclick="askDownloadType()" class="back" id="download">Download</button>
+
+  <div class="page-wrapper">
+    <div class="container">
+
+      <h1>
+        Service Details for {{#if formattedMonth}}{{formattedMonth}}{{else if formattedYear}}{{formattedYear}}{{/if}}
+      </h1>
+
+      <table id="ServiceTable">
+        <thead>
+          <tr>
+            <th style="width: 100px;">Date</th>
+            <th>Service Bill Image</th>
+            <th>Bus Number</th>
+            <th>Driver Name</th>
+            <th>Driver ID</th>
+            <th>Type</th>
+            <th>Notes</th>
+            <th>Amount</th>
+            <th>Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#if ServiceInfo.length}}
+          {{#each ServiceInfo}}
+          <tr>
+            <td>{{#if this.date}}{{this.date}}{{else}}No data{{/if}}</td>
+            <td>
+              {{#if this.ImageUrl}}
+              <img src="{{this.ImageUrl}}" alt="Fuel Bill Image" width="132" height="170"
+                style="object-fit:contain; margin-right:5px;" crossOrigin="anonymous">
+              {{else}}
+              <div class="photo">No Image</div>
+              {{/if}}
+            </td>
+            <td>{{#if this.bus_number}}{{this.bus_number}}{{else}}No Driver Number data{{/if}}</td>
+            <td>{{#if this.Name}}{{this.Name}}{{else}}No Driver Name data{{/if}}</td>
+            <td>{{#if this.Unique_id}}{{this.Unique_id}}{{else}}No Unique_id data{{/if}}</td>
+            <td>{{#if this.Type}}{{this.Type}}{{else}}No Type data{{/if}}</td>
+            <td>{{#if this.Note}}{{this.Note}}{{else}}No Notes data{{/if}}</td>
+            <td>{{#if this.Amount}}{{this.Amount}}{{else}}No Amount data{{/if}}</td>
+            <td>{{#if this.Location}}{{this.Location}}{{else}}No Location data{{/if}}</td>
+          </tr>
+          {{/each}}
+
+          <tr style="font-weight: bold; background-color: #e0e0e0;">
+            <td>Bus Number :{{bus_number}}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Expensive :{{#if TotalAmount}}{{TotalAmount}}{{else}}No TotalAmount data{{/if}}</td>
+          </tr>
+          {{else}}
+          <tr>
+            <td colspan="8" class="error">No recorded data found for selected period.</td>
+          </tr>
+          {{/if}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+
+    const reportDate = " {{#if formattedMonth}}{{formattedMonth}}{{else if formattedYear}}{{formattedYear}}{{/if}}";
+
+    function askDownloadType() {
+      const type = prompt("Which type do you want to download? (Type 'pdf' or 'excel')").toLowerCase();
+
+      if (type === 'pdf') {
+        exportToPDF();
+      } else if (type === 'excel') {
+        exportToExcel();
+      } else if (type) {
+        alert("Invalid choice! Please type 'pdf' or 'excel'.");
+      }
+    }
+
+    async function exportToPDF() {
+      const { jsPDF } = window.jspdf;
+      const table = document.getElementById("ServiceTable");
+      const canvas = await html2canvas(table, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "pt",
+        format: "a4"
+      });
+
+      pdf.setFontSize(14);
+      pdf.text(`Service Report for ${reportDate}`, 40, 40);
+
+      const imgProps = pdf.getImageProperties(imgData);
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pdfWidth = pageWidth - 80;
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      const startY = 80;
+      pdf.addImage(imgData, 'PNG', 40, startY, pdfWidth, pdfHeight);
+      pdf.save(`ServiceTable_${reportDate || 'report'}.pdf`);
+    }
+
+    function exportToExcel() {
+      const table = document.getElementById('ServiceTable');
+      const wb = XLSX.utils.table_to_book(table, { sheet: "Service Report for ${reportDate}" });
+      XLSX.writeFile(wb, 'Service_report.xlsx');
+    }
+  </script>
+
+</body>
+
+</html>

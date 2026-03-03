@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Bus Reports</title>
+  <link rel="icon" href="/pngtree-passenger-coach-bus-woodcut-png-image_10206746.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #eef3f9, #f9fafb);
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    h2,
+    h4 {
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: #0f172a;
+    }
+
+    .section,
+    .table-container,
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+
+    .section {
+      padding: 20px;
+    }
+
+    .table-container {
+      padding: 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #3164d2;
+      color: #fff;
+      font-weight: 600;
+      padding: 15px 20px;
+      font-size: 18px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    form label {
+      font-weight: 500;
+      margin-right: 15px;
+    }
+
+    .input-subgroup {
+      margin-top: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+    }
+
+    input[type="date"],
+    input[type="month"],
+    input[type="text"],
+    input[type="number"] {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      width: 250px;
+      transition: border 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .button,
+    .back {
+      padding: 12px 30px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .button:hover,
+    .back:hover {
+      background: #1e40af;
+      transform: translateY(-2px);
+    }
+
+    .back {
+      background: #16a34a;
+      float: right;
+      margin: 20px 5%;
+    }
+
+    .back:hover {
+      background: #15803d;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: #1e293b;
+      color: white;
+      text-transform: uppercase;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+
+    tr:nth-child(even) {
+      background: #f9fafb;
+    }
+
+    .content {
+      display: flex;
+      padding: 20px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    #download {
+      margin-top: 1px;
+    }
+
+    .photo {
+      width: 150px;
+      height: 150px;
+      border-radius: 12px;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #64748b;
+      border: 1px dashed #cbd5e1;
+    }
+
+    .details {
+      flex-grow: 1;
+      min-width: 250px;
+      font-size: 14px;
+    }
+
+    #Report {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .report-card {
+      flex: 1;
+      min-width: 250px;
+      padding: 18px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    .report-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    }
+
+    .report-card h2 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #1e293b;
+    }
+
+    .report-card p,
+    .report-card li {
+      font-size: 14px;
+      color: #334155;
+    }
+
+    .report-card ul {
+      padding-left: 18px;
+      margin: 5px 0;
+    }
+
+    #BusReportTable img {
+      transition: all 0.4s ease-in-out;
+      border-radius: 12px;
+    }
+
+    .error {
+      text-align: center;
+      color: #dc2626;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+
+      .section,
+      .table-container {
+        margin: 10px;
+        padding: 15px;
+      }
+
+      .header {
+        font-size: 16px;
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .input-subgroup {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .button,
+      .back {
+        width: 100%;
+        margin: 10px 0;
+      }
+
+      .content {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .details {
+        font-size: 13px;
+        line-height: 1.4;
+        min-width: 100%;
+        margin-top: 15px;
+      }
+
+      .details table {
+        width: 100%;
+        font-size: 13px;
+      }
+
+      .details td {
+        display: block;
+        width: 100%;
+        padding: 8px 0;
+        border: none;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .details td:first-child {
+        font-weight: 600;
+        color: #1e293b;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+  {{> navbar }}
+
+  <div id="BusReport" class="section">
+    <div class="header">
+      <span>Check Bus Report</span>
+    </div>
+
+    <form class="form" id="form_BusReport" action="/Auth/DailyBusReport" method="post">
+      <label><input type="radio" name="selectType_BusReport" value="month" /> Month</label>
+      <label><input type="radio" name="selectType_BusReport" value="year" /> Year</label>
+
+      <div id="monthInput_BusReport" class="input-subgroup hidden">
+        <label for="input-month_BusReport">Month</label>
+        <input type="month" id="input-month_BusReport" name="selectedMonth" />
+        <label for="input-bus-month_BusReport">Bus Number</label>
+        <input type="text" id="input-bus-month_BusReport" name="Bus_Number_Month" style="text-transform: uppercase;"
+          oninput="this.value = this.value.toUpperCase()" />
+      </div>
+
+      <div id="yearInput_BusReport" class="input-subgroup hidden">
+        <label for="input-year_BusReport">Year</label>
+        <input type="text" id="input-year_BusReport" name="selectedYear" pattern="\d{4}" maxlength="4"
+          placeholder="e.g., 2025" />
+        <label for="input-bus-year_BusReport">Bus Number</label>
+        <input type="text" id="input-bus-year_BusReport" name="Bus_Number_Year" style="text-transform: uppercase;"
+          oninput="this.value = this.value.toUpperCase()" />
+      </div>
+
+      <div id="submitSection_BusReport" class="input-subgroup hidden">
+        <button type="button" class="button" onclick="submitReport('BusReport')">Submit</button>
+      </div>
+    </form>
+  </div>
+  {{#ifOr formattedMonth formattedYear}}
+  <div class="table-container">
+    <div class="container" id="BusReportTable">
+      <div class="header">
+        <span style="display: inline-block;">Bus Information for {{#if formattedMonth}}{{formattedMonth}}{{else if
+          formattedYear}}{{formattedYear}}{{/if}}</span>
+      </div>
+      {{#with BusDetailsData}}
+      <div class="content">
+        {{#if this.imageUrl}}
+        <img src="{{this.imageUrl}}" alt="Bus Image" width="132" height="170"
+          style="object-fit:contain; margin-right:5px;" crossOrigin="anonymous" />
+        {{else}}
+        <div class="photo">No Image</div>
+        {{/if}}
+        <div class="details">
+          <form>
+            <table border="0">
+              <tr>
+                <td>Bus Number</td>
+                <td>{{Bus_Number}}</td>
+              </tr>
+              <tr>
+                <td>TN Number</td>
+                <td>{{TN_Number}}</td>
+              </tr>
+            </table>
+          </form>
+          <div id="more-info" class="hidden">
+            <form>
+              <table border="0">
+                <tr>
+                  <td>Registration Number</td>
+                  <td>{{Registration_Number}}</td>
+                </tr>
+                <tr>
+                  <td>FC Number</td>
+                  <td>{{FC_Number}}</td>
+                </tr>
+                <tr>
+                  <td>Insurance Number</td>
+                  <td>{{Insurance_Number}}</td>
+                </tr>
+
+              </table>
+            </form>
+            {{/with}}
+            <div id="Report">
+              <div class="report-card">
+                <h2>Distance & Mileage</h4>
+                  <p><strong>Total Distance for {{#if formattedMonth}}{{formattedMonth}}{{else if
+                      formattedYear}}{{formattedYear}}{{/if}}:</strong> {{totalDistance}} km</p>
+                  <p><strong>Total Fuel Used for {{#if formattedMonth}}{{formattedMonth}}{{else if
+                      formattedYear}}{{formattedYear}}{{/if}}:</strong> {{TotalFuel}} liters</p>
+                  <p><strong>Overall Mileage for {{#if formattedMonth}}{{formattedMonth}}{{else if
+                      formattedYear}}{{formattedYear}}{{/if}}:</strong> {{overallMileage}} km/l</p>
+              </div>
+
+              <div class="report-card">
+                <h2>Fuel Summary</h4>
+                  <p><strong>Total Fuel Used for {{#if formattedMonth}}{{formattedMonth}}{{else if
+                      formattedYear}}{{formattedYear}}{{/if}}:</strong> {{TotalFuel}} liters</p>
+                  <p><strong>Total Fuel Amount for {{#if formattedMonth}}{{formattedMonth}}{{else if
+                      formattedYear}}{{formattedYear}}{{/if}}:</strong> ₹{{TotalFuelAmount}}</p>
+              </div>
+
+              <div class="report-card">
+                <h2>Service Summary</h4>
+                  <p><strong>Service Details for {{#if formattedMonth}}{{formattedMonth}}{{else if
+                      formattedYear}}{{formattedYear}}{{/if}}:</strong></p>
+                  <ul>
+                    {{#each serviceDetails}}
+                    <li>{{this.type}} - ₹{{this.amount}}</li>
+                    {{/each}}
+                  </ul>
+                  <p><strong>Total Service Amount for {{#if formattedMonth}}{{formattedMonth}}{{else if
+                      formattedYear}}{{formattedYear}}{{/if}}:</strong> ₹{{TotalServiceAmount}}</p>
+              </div>
+
+             <!--<div class="report-card">
+                <h2>Passenger Info</h4>
+                  <p><strong>Total Passengers Count for {{#if formattedMonth}}{{formattedMonth}}{{else if
+                      formattedYear}}{{formattedYear}}{{/if}}:</strong> {{TotalPassengers}}</p>
+              </div>-->
+
+              <div class="report-card">
+                <p><strong>Overall Expense for {{#if
+                    formattedMonth}}{{formattedMonth}}{{else if
+                    formattedYear}}{{formattedYear}}{{/if}}:</strong> ₹{{totalExpense}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button style="display: inline-block; margin-left:60px;" class="button" onclick="toggleInfo()">Show More</button>
+    <button onclick="exportToPDF()" class="back" id="download">Download</button>
+  </div>
+  {{/ifOr}}
+  <script>
+    const reportDate = "{{#if formattedMonth}}{{formattedMonth}}{{else if formattedYear}}{{formattedYear}}{{/if}}";
+
+    function toggleInfo() {
+      const info = document.getElementById("more-info");
+      const button = document.querySelector(".table-container .button");
+      const img = document.querySelector("#BusReportTable img");
+      const isHidden = info.classList.contains("hidden");
+
+      info.classList.toggle("hidden");
+      button.textContent = isHidden ? "Show Less" : "Show More";
+
+      if (img) {
+        if (isHidden) {
+          img.style.width = "995px";
+          img.style.height = "300px";
+          img.style.objectFit = "contain";
+        } else {
+          img.style.width = "132px";
+          img.style.height = "170px";
+          img.style.objectFit = "contain";
+        }
+      }
+    }
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const radios = document.querySelectorAll('input[name="selectType_BusReport"]');
+      radios.forEach((radio) => {
+        radio.addEventListener("change", function () {
+          handleSelectTypeChange("BusReport", radio.value);
+        });
+      });
+    });
+
+    function submitReport(sectionId) {
+      const radios = document.querySelectorAll(`input[name="selectType_${sectionId}"]`);
+      const selected = [...radios].find(r => r.checked);
+
+      if (!selected) {
+        alert("Please select a filter type (Month or Year).");
+        return;
+      }
+
+      let value = "", busNumber = "";
+
+      if (selected.value === "month") {
+        value = document.getElementById("input-month_BusReport").value;
+        busNumber = document.getElementById("input-bus-month_BusReport").value;
+        if (!value || !busNumber) {
+          alert("Please select a month and enter the bus number.");
+          return;
+        }
+        document.getElementById("input-bus-month_BusReport").name = "Bus_Number";
+      } else if (selected.value === "year") {
+        value = document.getElementById("input-year_BusReport").value;
+        busNumber = document.getElementById("input-bus-year_BusReport").value;
+        if (!value || !busNumber) {
+          alert("Please enter a year and the bus number.");
+          return;
+        }
+        document.getElementById("input-bus-year_BusReport").name = "Bus_Number";
+      }
+
+      document.getElementById(`form_${sectionId}`).submit();
+    }
+
+    function handleSelectTypeChange(sectionId, selectedValue) {
+      const monthInput = document.getElementById(`monthInput_${sectionId}`);
+      const yearInput = document.getElementById(`yearInput_${sectionId}`);
+      const submitSection = document.getElementById(`submitSection_${sectionId}`);
+
+      monthInput.classList.add("hidden");
+      yearInput.classList.add("hidden");
+      submitSection.classList.remove("hidden");
+
+      if (selectedValue === "month") {
+        monthInput.classList.remove("hidden");
+      } else if (selectedValue === "year") {
+        yearInput.classList.remove("hidden");
+      }
+    }
+
+    async function exportToPDF() {
+      const { jsPDF } = window.jspdf;
+      const table = document.getElementById("BusReportTable");
+      const moreInfo = document.getElementById("more-info");
+      const toggleBtn = document.querySelector('.table-container .button:not(#download)');
+
+      const wasHidden = moreInfo.classList.contains("hidden");
+
+      moreInfo.classList.remove("hidden");
+      if (toggleBtn) toggleBtn.textContent = "Show Less";
+
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      const canvas = await html2canvas(table, {
+        useCORS: true,
+        scale: 2
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "pt",
+        format: "a4"
+      });
+
+      pdf.setFontSize(14);
+      pdf.text(`Bus Report for ${reportDate}`, 40, 40);
+
+      const imgProps = pdf.getImageProperties(imgData);
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pdfWidth = pageWidth - 80;
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      const startY = 80;
+      pdf.addImage(imgData, "PNG", 40, startY, pdfWidth, pdfHeight);
+      pdf.save(`BusReportTable_${reportDate || "report"}.pdf`);
+
+      if (wasHidden) {
+        moreInfo.classList.add("hidden");
+        if (toggleBtn) toggleBtn.textContent = "Show More";
+      }
+    }
+
+
+  </script>
+
+</body>
+
+</html>

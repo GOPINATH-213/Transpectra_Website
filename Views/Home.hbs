@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Transport Management - Details</title>
+  <link rel="icon" href="/pngtree-passenger-coach-bus-woodcut-png-image_10206746.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #f9fafb);
+      scroll-behavior: smooth;
+      color: #1e293b;
+    }
+
+    /* Hero Section */
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 10%;
+      margin-top: 5%;
+    }
+
+    .buttons {
+      display: flex;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 25px;
+      max-width: 1200px;
+      width: 100%;
+      margin: 5px;
+      margin-left: 20%;
+    }
+
+    /* Card Buttons */
+    .btn-box {
+      height: 180px;
+      border-radius: 20px;
+      color: white;
+      font-weight: bold;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding: 15px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-box span {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 8px 15px;
+      border-radius: 10px;
+    }
+
+    .btn-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.35);
+    }
+
+    /* Swipe Indicator */
+    .arrow {
+      font-weight: bold;
+      font-size: 18px;
+      color: #1e293b;
+      cursor: pointer;
+      margin-bottom: 20px;
+      animation: bounce 1.2s infinite;
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(8px);
+      }
+    }
+
+    /* Mileage Section */
+    .mileage-section {
+      min-height: 100vh;
+      background: #ffffff;
+      border-radius: 20px 20px 0 0;
+      padding: 40px 20px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .mileage-section h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .swipe-text {
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: 500;
+    }
+
+    /* Form */
+    form {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    input[type="month"] {
+      padding: 10px;
+      border: 2px solid #2563eb;
+      border-radius: 8px;
+      background-color: #fff;
+      color: #1e293b;
+      font-weight: 600;
+      font-size: 15px;
+      margin-right: 10px;
+    }
+
+    .btnb-box {
+      background: #2563eb;
+      color: white;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btnb-box:hover {
+      background: #1e40af;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    th {
+      background-color: #3164d2;
+      color: #fff;
+      padding: 15px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9fafb;
+    }
+
+    tr:hover {
+      background-color: #e0f2fe;
+      transition: 0.3s;
+    }
+
+    .error {
+      color: crimson;
+      font-weight: 600;
+      background-color: #fef2f2;
+      text-align: center;
+      padding: 15px;
+    }
+
+    /* Up Arrow */
+    .up-arrow {
+      font-size: 18px;
+      text-align: center;
+      cursor: pointer;
+      animation: bounceUp 1.2s infinite;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      color: #1e293b;
+    }
+
+    @keyframes bounceUp {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .buttons {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .buttons {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  {{> navbar }}
+  <!-- First Section -->
+  <div class="container" id="top">
+    <h1 style="font-family: 'Poppins', sans-serif; font-size: 2rem; font-weight: 700;">Welcome to Transpectra
+    </h1>
+    <div class="arrow" onclick="scrollToMileage()">⬇ Swipe Down to Check Bus Mileage Ranking</div>
+    <p style="font-size: 1rem; color: #475569;">Manage routes, drivers, buses, and reports efficiently</p>
+
+    <div class="buttons">
+      <button class="btn-box" onclick="location.href='/Route'" style="background-image: url('/Add-route.jpg');">
+        <span>Add Route</span>
+      </button>
+
+      <button class="btn-box" onclick="location.href='/DriverDetails'"
+        style="background-image: url('/Driver-Details.jpg');">
+        <span>Driver Details</span>
+      </button>
+
+      <button class="btn-box" onclick="location.href='/BusDetails'" style="background-image: url('/Bus-Details.jpg');">
+        <span>Bus Details</span>
+      </button>
+
+      <button class="btn-box" onclick="location.href='/BusReport'" style="background-image: url('/Bus-Report.JPG');">
+        <span>Bus Report</span>
+      </button>
+
+      <button class="btn-box" onclick="location.href='/EmailSending'" style="background-image: url('/Email-Sending.webp');">
+        <span>Share Report</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mileage Section -->
+  <div class="mileage-section" id="mileage">
+    <div class="up-arrow" onclick="scrollToTop()">⬆ Swipe Up</div>
+    <div class="swipe-text">
+      <form action="/Dashboard" method="get">
+        <label for="monthSelect" style="font-weight:600;">Select Month:</label>
+        <input type="month" id="monthSelect" name="month" required value="{{currentMonth}}">
+        <button type="submit" class="btnb-box">View Report</button>
+      </form>
+    </div>
+
+    {{#if Month}}
+    <h2>Mileage Rankings for {{Month}}</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Bus Number</th>
+          <th>Mileage</th>
+          <th>Total Distance Travelled</th>
+          <th>Total Fuel Used</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#if Print.length}}
+        {{#each Print}}
+        <tr>
+          <td>{{this.Bus_Number}}</td>
+          <td>{{this.Mileage}} Kilometer/Litre</td>
+          <td>{{this.Distance_Traveled}} Kilometer</td>
+          <td>{{this.Fuel_Used}} Litre</td>
+        </tr>
+        {{/each}}
+        {{else}}
+        <tr>
+          <td colspan="4" class="error">No recorded data found for selected period.</td>
+        </tr>
+        {{/if}}
+        {{/if}}
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function scrollToMileage() {
+      document.getElementById("mileage").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    window.onload = function () {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("month")) {
+        setTimeout(() => {
+          scrollToMileage();
+        }, 300);
+      }
+    };
+  </script>
+</body>
+
+</html>

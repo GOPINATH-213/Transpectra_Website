@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Destination Checklist</title>
+  <link rel="icon" href="/pngtree-passenger-coach-bus-woodcut-png-image_10206746.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #f9fafb);
+      color: #1e293b;
+      line-height: 1.5;
+    }
+
+    .page-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .container {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      width: 95%;
+      max-width: 1100px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+      overflow-x: auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+
+    th,
+    td {
+      border: 1px solid #e2e8f0;
+      padding: 12px 10px;
+      text-align: center;
+    }
+
+    th {
+      background: #334155;
+      color: #f1f5f9;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    tr:hover {
+      background: #f1f5f9;
+      transition: background 0.3s ease;
+    }
+
+    tfoot td {
+      font-weight: bold;
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    .back {
+      display: inline-block;
+      margin: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 25px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      background: #ffffff;
+      color: #475569;
+      box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+      transition: all 0.3s ease, transform 0.2s ease;
+      animation: bounceUp 2s infinite;
+    }
+
+    .back:hover {
+      background: #f8fafc;
+      transform: translateY(-4px) scale(1.02);
+    }
+
+    .back:active {
+      transform: scale(0.95);
+    }
+
+    #download {
+      background: #16a34a;
+      color: #fff;
+      font-weight: 600;
+      margin-left: auto;
+      margin-right: 20px;
+      box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3);
+      transition: all 0.3s ease, transform 0.2s ease;
+      animation: bounceUp 2s infinite;
+      margin-left: 77%;
+    }
+
+    #download:hover {
+      background: #22c55e;
+      transform: translateY(-4px) scale(1.05);
+    }
+
+    @keyframes bounceUp {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #b91c1c;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 16px;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+      }
+
+      table {
+        font-size: 0.85rem;
+      }
+
+      th,
+      td {
+        padding: 8px;
+      }
+
+      .back,
+      #download {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+  {{> navbar }}
+
+  {{#if busId}}
+  <a href="/ViewBus/{{busId}}" class="back"> ⬅️ Back </a>
+  {{/if}}
+
+  <button onclick="askDownloadType()" class="back" id="download">Download</button>
+
+  <div class="page-wrapper">
+    <div class="container">
+
+      <h1 class="lefth1">
+        Destination Checklist for {{#if formattedMonth}}{{formattedMonth}}{{else if
+        formattedYear}}{{formattedYear}}{{/if}}
+      </h1>
+      <h1 class="righth1">Bus Number: {{bus_number}}</h1>
+
+      <table id="DestinationChecklistTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Unique ID</th>
+            <th>Driver Name</th>
+            <th>Brakes</th>
+            <th>Gear Box</th>
+            <th>Lights</th>
+            <th>Steering</th>
+            <th>Tires</th>
+            <th>Wipers</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#if DestinationDetails.length}}
+          {{#each DestinationDetails}}
+          <tr>
+            <td>{{this.date}}</td>
+            <td>{{this.UniqueID}}</td>
+            <td>{{this.DriverName}}</td>
+            <td>
+              <span class="{{#if (eq this.checklist.Brakes 'Checked')}}checked{{else}}not-checked{{/if}}">
+                {{this.checklist.Brakes}}
+              </span>
+            </td>
+
+            <td>
+              <span class="{{#if (eq this.checklist.GearBox 'Checked')}}checked{{else}}not-checked{{/if}}">
+                {{this.checklist.GearBox}}
+              </span>
+            </td>
+
+            <td>
+              <span class="{{#if (eq this.checklist.Lights 'Checked')}}checked{{else}}not-checked{{/if}}">
+                {{this.checklist.Lights}}
+              </span>
+            </td>
+
+            <td>
+              <span class="{{#if (eq this.checklist.Steering 'Checked')}}checked{{else}}not-checked{{/if}}">
+                {{this.checklist.Steering}}
+              </span>
+            </td>
+
+            <td>
+              <span class="{{#if (eq this.checklist.Tires 'Checked')}}checked{{else}}not-checked{{/if}}">
+                {{this.checklist.Tires}}
+              </span>
+            </td>
+
+            <td>
+              <span class="{{#if (eq this.checklist.Wipers 'Checked')}}checked{{else}}not-checked{{/if}}">
+                {{this.checklist.Wipers}}
+              </span>
+            </td>
+          </tr>
+          {{/each}}
+
+          <tr style="font-weight: bold; background-color: #e0e0e0;">
+            <td colspan="9">Bus Number: {{bus_number}}</td>
+          </tr>
+          {{else}}
+          <tr>
+            <td colspan="9" class="error">No recorded data found for selected period.</td>
+          </tr>
+          {{/if}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const reportDate = " {{#if formattedMonth}}{{formattedMonth}}{{else if formattedYear}}{{formattedYear}}{{/if}}";
+  </script>
+  <script>
+
+    function askDownloadType() {
+      const type = prompt("Which type do you want to download? (Type 'pdf' or 'excel')").toLowerCase();
+
+      if (type === 'pdf') {
+        exportToPDF();
+      } else if (type === 'excel') {
+        exportToExcel();
+      } else if (type) {
+        alert("Invalid choice! Please type 'pdf' or 'excel'.");
+      }
+    }
+
+    function exportToPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.text(`DestinationChecklist Report for ${reportDate}`, 14, 10);
+      doc.autoTable({
+        html: '#DestinationChecklistTable',
+        theme: 'grid',
+        startY: 20,
+      });
+
+      doc.save('DestinationChecklist_report.pdf');
+    }
+
+    function exportToExcel() {
+      const table = document.getElementById('DestinationChecklistTable');
+      const wb = XLSX.utils.table_to_book(table, { sheet: "DestinationChecklist Report for ${reportDate}" });
+      XLSX.writeFile(wb, 'DestinationChecklist_report.xlsx');
+    }
+  </script>
+
+</body>
+
+</html>

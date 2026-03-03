@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Driver Details</title>
+    <link rel="icon" href="/pngtree-passenger-coach-bus-woodcut-png-image_10206746.png">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe, #f9fafb);
+            scroll-behavior: smooth;
+            color: #1e293b;
+            display: block;
+            justify-content: center;
+            align-items: center;
+        }
+
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+
+        .login-container {
+            background: #ffffff;
+            padding: 25px 35px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #475569;
+        }
+
+        .form-group input {
+            width: 93%;
+            padding: 10px 12px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #2563eb;
+            outline: none;
+            box-shadow: 0 0 6px rgba(37, 99, 235, 0.35);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background-color: #1e40af;
+        }
+
+        .View {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #475569;
+        }
+
+        .View a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .View a:hover {
+            text-decoration: underline;
+        }
+
+        .top-message {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            min-width: 300px;
+            max-width: 500px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .top-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: inherit;
+            cursor: pointer;
+            padding-left: 12px;
+            transition: opacity 0.3s ease;
+        }
+
+        .close-btn:hover {
+            opacity: 0.7;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 20px;
+            }
+
+            .login-container h1 {
+                font-size: 1.5rem;
+            }
+
+            .form-group input {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {{> navbar }}
+    <div id="top-message" class="top-message">
+        <span id="message-text"></span>
+        <button onclick="hideMessage()" class="close-btn">&times;</button>
+    </div>
+    <main>
+        <section class="login-container">
+            <h1>Edit Driver Details</h1>
+            {{#with Print }}
+            <form action="/Auth/EditUser/{{id}}" method="post" enctype="multipart/form-data">
+
+                <div class="form-group">
+                    <label for="Driverphoto">Driver's Photo:</label>
+                    {{#if this.DriverImage}}
+                    <img src="{{this.DriverImage.url}}" alt="Driver Image" width="132" height="170"
+                        style="object-fit:contain; margin-right:5px;">
+                    {{else}}
+                    No image
+                    {{/if}}
+                    <input type="file" name="Driverphoto" placeholder="Choose new image">
+                </div>
+
+                <div class="form-group">
+                    <label for="DriverName">Driver's Name:</label>
+                    <input type="text" name="DriverName" value="{{Name}}" placeholder="Enter your Driver Name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="DriverID">Unique ID:</label>
+                    <input type="text" name="DriverID" value="{{UniqueID}}" placeholder="Enter your Driver ID" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="LicenceNumber">Licence Number:</label>
+                    <input type="text" name="LicenceNumber" value="{{Licence_Number}}"
+                        placeholder="Enter your Licence Number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="LicenceExpiryDate">Licence Expiry Date:</label>
+                    <input type="date" name="LicenceExpiryDate" value="{{Licence_Expiry_Date}}"
+                        placeholder="Enter your Licence Expiry Date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="ContactNumber">Contact Number:</label>
+                    <input type="number" name="ContactNumber" maxlength="10" value="{{Contact_Number}}"
+                        placeholder="Enter your Contact Number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="AadharNumber">Aadhar Number:</label>
+                    <input type="number" name="AadharNumber" maxlength="12" value="{{Aadhar_Number}}"
+                        placeholder="Enter your Aadhar Number" required>
+                </div>
+
+                <button type="submit" class="submit-button">Edit Driver Details</button>
+                <p class="View">Do you want to view? <a href="/DriverDetails">View here</a>.</p>
+            </form>
+            {{/with}}
+        </section>
+    </main>
+
+    <script>
+        const msg = "{{msg}}";
+        const type = "{{msg_type}}";
+
+        function hideMessage() {
+            document.getElementById("top-message").style.display = "none";
+        }
+
+        if (msg) {
+            const messageBox = document.getElementById("top-message");
+            const messageText = document.getElementById("message-text");
+
+            messageText.innerText = msg;
+            messageBox.classList.add(type === "Good" ? "success" : "error");
+            messageBox.style.display = "flex";
+
+            setTimeout(() => {
+                messageBox.style.display = "none";
+            }, 4000);
+        }
+    </script>
+</body>
+
+</html>

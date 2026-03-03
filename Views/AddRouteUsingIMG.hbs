@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Add Route Upload & Extract</title>
+    <link
+      rel="icon"
+      href="/pngtree-passenger-coach-bus-woodcut-png-image_10206746.png"
+    />
+    <style>
+      body {
+        font-family: Inter, system-ui, Arial, sans-serif;
+        background: #f7fbff;
+        margin: 0;
+        padding: auto;
+        color: #111;
+      }
+      .container {
+        max-width: 980px;
+        margin: 0 auto;
+      }
+      .drop-area {
+        border: 2px dashed #9ec9ff;
+        padding: 30px;
+        border-radius: 8px;
+        text-align: center;
+        background: #fff;
+      }
+      .drop-area.dragover {
+        background: #eef7ff;
+        border-color: #4da1ff;
+      }
+      .preview {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+      .preview-item {
+        position: relative;
+        width: 140px;
+      }
+      .preview-item img {
+        width: 140px;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 6px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      }
+      .remove-btn {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        background: #d9534f;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 4px 6px;
+        cursor: pointer;
+      }
+      .controls {
+        margin-top: 10px;
+      }
+      .status {
+        margin-left: 12px;
+        color: #666;
+      }
+      .extracted {
+        margin-top: 18px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .routes-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 12px;
+        background: #fff;
+      }
+      .routes-table th,
+      .routes-table td {
+        border: 1px solid #eee;
+        padding: 8px 10px;
+        text-align: left;
+      }
+      .routes-table th {
+        background: #f0f8ff;
+      }
+      button {
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: none;
+        background: #007bff;
+        color: #fff;
+        cursor: pointer;
+      }
+      button:disabled {
+        background: #9ec9ff;
+        cursor: not-allowed;
+      }
+      button.danger {
+        background: #d9534f;
+      }
+      /* Modal background */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+}
+
+/* Hide modal by default */
+.modal.hidden {
+  display: none;
+}
+
+/* Modal content card */
+.modal-content {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  width: 400px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  animation: fadeInUp 0.3s ease;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Close button */
+.close {
+  float: right;
+  font-size: 22px;
+  cursor: pointer;
+  color: #888;
+}
+.close:hover {
+  color: #000;
+}
+
+/* Inputs */
+.modal-content input {
+  width: 95%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.saveBtn {
+  background: #007bff;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 15px;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+.saveBtn:hover {
+  background: #0056b3;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+      .toast {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        background: #222;
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 8px;
+      }
+      .toast.hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    {{> navbar }}
+    <div class="container">
+      <h1>Upload route images (drag & drop, multi)</h1>
+
+      <div id="drop-area" class="drop-area">
+        <p>Drop images here or <button id="browseBtn">Browse</button></p>
+        <input
+          id="fileInput"
+          type="file"
+          accept="image/*"
+          multiple
+          style="display: none"
+        />
+      </div>
+
+      <div id="preview" class="preview"></div>
+
+      <div class="controls">
+        <button id="processBtn" disabled>Process Images</button>
+        <span id="status" class="status"></span>
+      </div>
+
+      <hr />
+
+      <div class="extracted">
+        <label
+          >Date: <span id="displayDate">-</span>
+          <input id="datePicker" type="date" style="display: none"
+        /></label>
+        <button id="submitBtn" disabled>Submit</button>
+      </div>
+
+      <table id="routesTable" class="routes-table">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Bus</th>
+            <th>Route</th>
+            <th style="width: 10%">Time</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <!-- Edit modal -->
+<div id="modal" class="modal hidden">
+  <div class="modal-content">
+    <span id="closeModal" class="close">&times;</span>
+    <h2>Edit Route</h2>
+    <form id="editForm">
+      <label>No:</label>
+      <input type="text" id="editNo" required />
+
+      <label>Bus:</label>
+      <input type="text" id="editBus" required />
+
+      <label>Route:</label>
+      <input type="text" id="editRoute" required />
+
+      <label>Time:</label>
+      <input type="time" id="editTime" required />
+
+      <button type="submit" class="saveBtn">Save Changes</button>
+    </form>
+  </div>
+</div>
+
+
+      <div id="toast" class="toast hidden"></div>
+    </div>
+
+    <script>
+const dropArea = document.getElementById('drop-area');
+const fileInput = document.getElementById('fileInput');
+const browseBtn = document.getElementById('browseBtn');
+const preview = document.getElementById('preview');
+const processBtn = document.getElementById('processBtn');
+const status = document.getElementById('status');
+const displayDate = document.getElementById('displayDate');
+const datePicker = document.getElementById('datePicker');
+const submitBtn = document.getElementById('submitBtn');
+const routesTbody = document.querySelector('#routesTable tbody');
+
+const modal = document.getElementById("modal");
+const closeModal = document.getElementById("closeModal");
+const editForm = document.getElementById("editForm");
+const toast = document.getElementById('toast');
+
+let droppedFiles = [];    // actual File objects
+let extractedDate = null;
+let routes = [];          // array of {no,bus,route,time}
+let editingRowIndex = null;
+let editingIndex = null;
+
+// Drag & drop
+['dragenter','dragover'].forEach(ev => {
+  dropArea.addEventListener(ev, (e) => { e.preventDefault(); dropArea.classList.add('dragover'); });
+});
+['dragleave','drop'].forEach(ev => {
+  dropArea.addEventListener(ev, (e) => { e.preventDefault(); dropArea.classList.remove('dragover'); });
+});
+
+dropArea.addEventListener('drop', (e) => {
+  const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+  if (files.length) addFiles(files);
+});
+browseBtn.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', (e) => {
+  const files = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
+  if (files.length) addFiles(files);
+});
+
+function addFiles(files) {
+  for (const f of files) {
+    droppedFiles.push(f);
+    const url = URL.createObjectURL(f);
+    const item = document.createElement('div');
+    item.className = 'preview-item';
+    item.innerHTML = `<img src="${url}" alt="${escapeHtml(f.name)}" /><button class="remove-btn">Remove</button>`;
+    item.querySelector('.remove-btn').addEventListener('click', () => {
+      preview.removeChild(item);
+      droppedFiles = droppedFiles.filter(x => x !== f);
+      processBtn.disabled = droppedFiles.length === 0;
+    });
+    preview.appendChild(item);
+  }
+  processBtn.disabled = droppedFiles.length === 0;
+  showStatus(`${droppedFiles.length} image(s) ready`);
+}
+
+processBtn.addEventListener('click', async () => {
+  if (droppedFiles.length === 0) return showToast('No images selected');
+  processBtn.disabled = true;
+  showStatus('Uploading and extracting...');
+  try {
+    const fd = new FormData();
+    for (const f of droppedFiles) fd.append('images', f, f.name);
+
+    const res = await fetch('/Auth/upload', { method: 'POST', body: fd });
+    const body = await res.json();
+    if (!res.ok || !body.success) throw new Error(body.error || 'Extraction failed');
+
+    // body.extracted is an array (we return single parsed JSON from server; keep unified handling)
+    const parsed = body.extracted && body.extracted.length ? body.extracted[0] : null;
+    if (parsed && parsed.date) {
+      extractedDate = parsed.date;
+      displayDate.textContent = extractedDate;
+      datePicker.value = extractedDate;
+    } else {
+      displayDate.textContent = '-';
+      datePicker.value = '';
+      extractedDate = null;
+    }
+
+    // append parsed routes
+    appendRoutes(parsed?.routes || []);
+    showToast('Extraction finished');
+    submitBtn.disabled = routes.length === 0 || !extractedDate;
+  } catch (err) {
+    console.error(err);
+    showToast('Extraction failed: ' + (err.message || err));
+  } finally {
+    processBtn.disabled = false;
+    showStatus('');
+  }
+});
+
+function appendRoutes(newRoutes) {
+  for (const r of newRoutes) {
+    const no = r.no || String(routes.length + 1);
+    routes.push({ no, bus: r.bus || '', route: r.route || '', time: convertTo12(r.time) || '' });
+  }
+  renderTable();
+}
+
+function convertTo12(timeStr) {
+  if (!timeStr) return "";
+  let s = timeStr.trim();
+
+  // If input already has AM/PM, just normalize it
+  const ampmMatch = s.match(/\b([AaPp][Mm])\b/);
+  if (ampmMatch) {
+    let [h, m] = s.replace(/\s*[AaPp][Mm]\b/, "").split(":").map(x => parseInt(x, 10));
+    if (isNaN(h) || isNaN(m)) return timeStr;
+    let period = ampmMatch[1]
+    h = h % 12; // keep within 1–12 range
+    if (h === 0) h = 12;
+    return `${h}:${String(m).padStart(2,"0")} ${period}`;
+  }
+
+  // If input is 24h (HH:mm), convert to 12h
+  const [hRaw, mRaw] = s.split(":").map(x => parseInt(x, 10));
+  if (isNaN(hRaw) || isNaN(mRaw)) return timeStr;
+
+  let period = hRaw >= 12 ? "PM" : "AM";
+  let h = hRaw % 12;
+  if (h === 0) h = 12;
+
+  return `${h}:${String(mRaw).padStart(2,"0")} ${period}`;
+}
+
+function renderTable() {
+  routesTbody.innerHTML = '';
+  for (let i = 0; i < routes.length; i++) {
+    const r = routes[i];
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${r.no}</td>
+      <td>${escapeHtml(r.bus)}</td>
+      <td>${escapeHtml(r.route)}</td>
+      <td>${escapeHtml(convertTo12(r.time))}</td>
+      <td><button class="editBtn" data-index="${i}">Edit</button></td>
+      <td><button class="deleteBtn danger" data-index="${i}">Delete</button></td>
+    `;
+    routesTbody.appendChild(tr);
+  }
+  routesTbody.querySelectorAll('.editBtn').forEach(b => {
+    b.addEventListener('click', (e) => {
+      const idx = Number(e.currentTarget.dataset.index);
+      openEditModal(routes[idx], idx);
+    });
+  });
+
+  routesTbody.querySelectorAll('.deleteBtn').forEach(b => {
+  b.addEventListener('click', (e) => {
+    const idx = Number(e.currentTarget.dataset.index);
+    const confirmDelete = confirm("Are you sure you want to delete this route?");
+    if (!confirmDelete) return;
+
+    routes.splice(idx, 1); // remove route from array
+    renderTable(); // re-render table
+    showToast("Route deleted");
+    submitBtn.disabled = routes.length === 0 || !extractedDate;
+  });
+});
+
+
+}
+
+function openEditModal(route, index) {
+  editingIndex = index;
+
+  document.getElementById("editNo").value = route.no;
+  document.getElementById("editBus").value = route.bus;
+  document.getElementById("editRoute").value = route.route;
+
+  // Fix time input → expects HH:mm in 24h
+  const timeParts = route.time.match(/(\d{1,2}):(\d{2})\s?(AM|PM)?/i);
+  if (timeParts) {
+    let hours = parseInt(timeParts[1], 10);
+    const minutes = timeParts[2];
+    const ampm = timeParts[3]?.toUpperCase();
+
+    if (ampm === "PM" && hours < 12) hours += 12;
+    if (ampm === "AM" && hours === 12) hours = 0;
+
+    document.getElementById("editTime").value =
+      `${String(hours).padStart(2,"0")}:${minutes}`;
+  } else {
+    document.getElementById("editTime").value = "";
+  }
+
+  modal.classList.remove("hidden");
+}
+
+// Close modal
+closeModal.onclick = () => modal.classList.add("hidden");
+
+// Save edited data
+editForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const updatedRoute = {
+    no: document.getElementById("editNo").value,
+    bus: document.getElementById("editBus").value,
+    route: document.getElementById("editRoute").value,
+    time: document.getElementById("editTime").value, // HH:mm format
+  };
+
+  // Update the specific route
+  routes[editingIndex] = updatedRoute;
+
+  // Re-render the table instead of re-appending
+  renderTable();
+
+  // Close modal
+  modal.classList.add("hidden");
+});
+
+// date editing
+displayDate.addEventListener('click', () => {
+  datePicker.style.display = datePicker.style.display === 'inline-block' ? 'none' : 'inline-block';
+  datePicker.focus();
+});
+datePicker.addEventListener('change', ()=> {
+  extractedDate = datePicker.value;
+  displayDate.textContent = extractedDate || '-';
+  submitBtn.disabled = routes.length === 0 || !extractedDate;
+});
+
+// submit to Firestore
+submitBtn.addEventListener('click', async () => {
+  if (!extractedDate) return showToast('Set the date before submitting');
+  if (routes.length === 0) return showToast('No routes to submit');
+  submitBtn.disabled = true;
+  showStatus('Submitting...');
+  try {
+    const res = await fetch('/Auth/submitRoutes', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ date: extractedDate, routes })
+    });
+    const body = await res.json();
+    if (!res.ok || !body.success) throw new Error(body.error || 'Submit failed');
+    showToast(body.message || 'Submitted successfully');
+    // clear
+    routes = []; renderTable();
+    preview.innerHTML = ''; droppedFiles = []; displayDate.textContent = '-'; datePicker.value = ''; extractedDate = null;
+    submitBtn.disabled = true;
+  } catch (err) {
+    console.error(err);
+    showToast('Submit error: ' + (err.message || err));
+  } finally {
+    submitBtn.disabled = false; showStatus('');
+  }
+});
+
+// helpers
+function showStatus(t){ status.textContent = t || ''; }
+function showToast(t){ toast.textContent = t; toast.classList.remove('hidden'); setTimeout(()=>toast.classList.add('hidden'),3000); }
+function escapeHtml(s){return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+    </script>
+  </body>
+</html>

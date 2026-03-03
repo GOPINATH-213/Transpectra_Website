@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="icon" href="/pngtree-passenger-coach-bus-woodcut-png-image_10206746.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            outline: none;
+            box-sizing: border-box;
+            font-family: 'Noto Sans', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            width: 100%;
+            background: #f0f2f5;
+        }
+
+        .container-fluid {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #fff;
+            width: 410px;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+        }
+
+        .container-fluid h2,
+        .container-fluid h3 {
+            font-weight: 400;
+        }
+
+        /*.container-fluid img {
+        width: 200px;
+        border-radius:;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }*/
+
+        .container-fluid img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body style="background-color: rgba(0, 0, 0, 0.5);">
+    {{> navbar }}
+    <div class="container-fluid">
+        <h2>User Profile</h2>
+        <img src="WhatsApp Image 2025-02-19 at 15.38.17_d0b37b16.jpg" alt="User Profile">
+        <h3>Name: {{ User.Name }}</h3>
+        <h3>Unique ID: {{ User.UniqueID }}</h3>
+    </div>
+</body>
+
+</html>

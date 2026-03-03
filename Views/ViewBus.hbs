@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bus Brief Details</title>
+  <link rel="icon" href="/pngtree-passenger-coach-bus-woodcut-png-image_10206746.png" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e0f2fe, #f9fafb);
+      scroll-behavior: smooth;
+      color: #1e293b;
+      display: block;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container,
+    .bar-container {
+      border: 2px solid #333;
+      width: 80%;
+      max-width: 1000px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-bottom: 20px;
+      margin: auto;
+      padding: auto;
+      margin-top: 20px;
+    }
+
+    .header,
+    .bar-header {
+      display: flex;
+      justify-content: space-between;
+      background-color: #3164d2;
+      padding: 15px;
+      color: #ddd;
+      font-weight: bold;
+      border-bottom: 2px solid black;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      margin-top: 10px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #3164d2;
+      color: white;
+    }
+
+    .content {
+      display: flex;
+      padding: 20px;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .photo {
+      width: 150px;
+      height: 150px;
+      border: 2px solid #333;
+      border-radius: 10px;
+      background-color: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: #555;
+    }
+
+    .section {
+      border: 2px solid #333;
+      display: none;
+      width: 80%;
+      max-width: 1000px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(240, 206, 206, 0.1);
+      margin-bottom: 20px;
+      margin-top: 20px;
+      box-sizing: border-box;
+    }
+
+    .section form {
+      padding: 10px 20px;
+      box-sizing: border-box;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .details {
+      flex-grow: 1;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .input-subgroup {
+      margin-top: 0.5rem;
+    }
+
+    .button {
+      font-size: 1rem;
+      cursor: pointer;
+      background-color: #333;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
+      display: block;
+      margin-top: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: background 0.3s;
+      width: 100%;
+      text-align: center;
+    }
+
+    .button:hover {
+      background-color: #007bff;
+    }
+
+    .section-selector {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+      padding: 10px;
+      background-color: #ffffff;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-selector label {
+      padding: 10px 15px;
+      background-color: #f1f1f1;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+
+    .section-selector input[type="radio"] {
+      display: none;
+    }
+
+    .section-selector input[type="radio"]:checked+label {
+      background-color: #007bff;
+      color: #fff;
+      border-color: #007bff;
+    }
+
+    .section-selector label:hover {
+      background-color: rgba(0, 123, 255, 0.5);
+    }
+
+    .Main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .input-subgroup {
+      margin-bottom: 15px;
+      padding-right: 15px;
+
+    }
+
+    .input-subgroup label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+    }
+
+    .input-subgroup input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .input-subgroup input:focus {
+      border-color: #007bff;
+      outline: none;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+  </style>
+</head>
+
+<body>
+  {{> navbar }}
+  {{#with Print}}
+  <div class="Main">
+    <div class="section-selector">
+      <input type="radio" name="sectionSelector" id="mileage" value="mileage" hidden />
+      <label for="mileage">Mileage Calculation</label>
+
+      <input type="radio" name="sectionSelector" id="fuel" value="fuel" hidden />
+      <label for="fuel">Fuel Details</label>
+
+      <input type="radio" name="sectionSelector" id="service" value="service" hidden />
+      <label for="service">Service Details</label>
+
+      <input type="radio" name="sectionSelector" id="trip" value="trip" hidden />
+      <label for="trip">Trip Details</label>
+
+      <input type="radio" name="sectionSelector" id="source" value="source" hidden />
+      <label for="source">Source Details</label>
+
+      <input type="radio" name="sectionSelector" id="destination" value="destination" hidden />
+      <label for="destination">Destination Details</label>
+
+      <input type="radio" name="sectionSelector" id="sourceDetails" value="sourceDetails" hidden />
+      <label for="sourceDetails">Source Checklist</label>
+
+      <input type="radio" name="sectionSelector" id="destinationDetails" value="destinationDetails" hidden />
+      <label for="destinationDetails">Destination Checklist</label>
+    </div>
+
+
+    <!-- Sections -->
+
+    <div id="mileage" class="section">
+      <div class="header">
+        <span>Mileage Calculation</span>
+      </div>
+      <form action="/Auth/Mileage/{{id}}" method="post">
+        <label><input type="radio" name="selectType_mileage" value="year" /> Year</label>
+        <label><input type="radio" name="selectType_mileage" value="month" /> Month</label>
+
+        <div id="yearInput_mileage" class="input-subgroup hidden">
+          <label for="year">Year</label>
+          <input type="text" id="input-year_mileage" name="selectedYear" pattern="\d{4}" maxlength="4"
+            placeholder="e.g., 2025" />
+        </div>
+        <div id="monthInput_mileage" class="input-subgroup hidden">
+          <label for="month">Month</label>
+          <input type="month" id="input-month_mileage" name="selectedMonth" />
+        </div>
+
+        <div id="submitSection_mileage" class="input-subgroup hidden">
+          <button class="button" onclick="submitMileage('mileage')">Submit</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="fuel" class="section">
+      <div class="header">
+        <span>Fuel Details</span>
+      </div>
+      <form action="/Auth/Fuel/{{id}}" method="post">
+        <label><input type="radio" name="selectType_fuel" value="year" /> Year</label>
+        <label><input type="radio" name="selectType_fuel" value="month" /> Month</label>
+
+        <div id="yearInput_fuel" class="input-subgroup hidden">
+          <label for="year">Year</label>
+          <input type="text" id="input-year_fuel" name="selectedYear" pattern="\d{4}" maxlength="4"
+            placeholder="e.g., 2025" />
+        </div>
+        <div id="monthInput_fuel" class="input-subgroup hidden">
+          <label for="month">Month</label>
+          <input type="month" id="input-month_fuel" name="selectedMonth" />
+        </div>
+
+        <div id="submitSection_fuel" class="input-subgroup hidden">
+          <button class="button" onclick="submitMileage('fuel')">Submit</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="service" class="section">
+      <div class="header">
+        <span>Service Details</span>
+      </div>
+      <form action="/Auth/Service/{{id}}" method="post">
+        <label><input type="radio" name="selectType_service" value="year" /> Year</label>
+        <label><input type="radio" name="selectType_service" value="month" /> Month</label>
+
+        <div id="yearInput_service" class="input-subgroup hidden">
+          <label for="year">Year</label>
+          <input type="text" id="input-year_service" name="selectedYear" pattern="\d{4}" maxlength="4"
+            placeholder="e.g., 2025" />
+        </div>
+        <div id="monthInput_service" class="input-subgroup hidden">
+          <label for="month">Month</label>
+          <input type="month" id="input-month_service" name="selectedMonth" />
+        </div>
+
+        <div id="submitSection_service" class="input-subgroup hidden">
+          <button class="button" onclick="submitMileage('service')">Submit</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="trip" class="section">
+      <div class="header">
+        <span>Trip Details</span>
+      </div>
+      <form action="/Auth/TripStatus/{{id}}" method="post">
+        <label><input type="radio" name="selectType_trip" value="year" /> Year</label>
+        <label><input type="radio" name="selectType_trip" value="month" /> Month</label>
+
+        <div id="yearInput_trip" class="input-subgroup hidden">
+          <label for="year">Year</label>
+          <input type="text" id="input-year_trip" name="selectedYear" pattern="\d{4}" maxlength="4"
+            placeholder="e.g., 2025" />
+        </div>
+        <div id="monthInput_trip" class="input-subgroup hidden">
+          <label for="month">Month</label>
+          <input type="month" id="input-month_trip" name="selectedMonth" />
+        </div>
+
+        <div id="submitSection_trip" class="input-subgroup hidden">
+          <button class="button" onclick="submitMileage('trip')">Submit</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="source" class="section">
+      <div class="header">
+        <span>Source Details</span>
+      </div>
+      <form action="/Auth/Source/{{id}}" method="post">
+        <label><input type="radio" name="selectType_source" value="year" /> Year</label>
+        <label><input type="radio" name="selectType_source" value="month" /> Month</label>
+
+        <div id="yearInput_source" class="input-subgroup hidden">
+          <label for="year">Year</label>
+          <input type="text" id="input-year_source" name="selectedYear" pattern="\d{4}" maxlength="4"
+            placeholder="e.g., 2025" />
+        </div>
+        <div id="monthInput_source" class="input-subgroup hidden">
+          <label for="month">Month</label>
+          <input type="month" id="input-month_source" name="selectedMonth" />
+        </div>
+
+        <div id="submitSection_source" class="input-subgroup hidden">
+          <button class="button" onclick="submitMileage('source')">Submit</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="destination" class="section">
+      <div class="header">
+        <span>Destination Details</span>
+      </div>
+      <form action="/Auth/Destination/{{id}}" method="post">
+        <label><input type="radio" name="selectType_destination" value="year" /> Year</label>
+        <label><input type="radio" name="selectType_destination" value="month" /> Month</label>
+
+        <div id="yearInput_destination" class="input-subgroup hidden">
+          <label for="year">Year</label>
+          <input type="text" id="input-year_destination" name="selectedYear" pattern="\d{4}" maxlength="4"
+            placeholder="e.g., 2025" />
+        </div>
+        <div id="monthInput_destination" class="input-subgroup hidden">
+          <label for="month">Month</label>
+          <input type="month" id="input-month_destination" name="selectedMonth" />
+        </div>
+
+        <div id="submitSection_destination" class="input-subgroup hidden">
+          <button class="button" onclick="submitMileage('destination')">Submit</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="sourceDetails" class="section">
+      <div class="header">
+        <span>Source Checklist</span>
+      </div>
+      <form action="/Auth/SourceChecklist/{{id}}" method="post">
+        <label><input type="radio" name="selectType_sourceDetails" value="year" /> Year</label>
+        <label><input type="radio" name="selectType_sourceDetails" value="month" /> Month</label>
+
+        <div id="yearInput_sourceDetails" class="input-subgroup hidden">
+          <label for="year">Year</label>
+          <input type="text" id="input-year_sourceDetails" name="selectedYear" pattern="\d{4}" maxlength="4"
+            placeholder="e.g., 2025" />
+        </div>
+        <div id="monthInput_sourceDetails" class="input-subgroup hidden">
+          <label for="month">Month</label>
+          <input type="month" id="input-month_sourceDetails" name="selectedMonth" />
+        </div>
+
+        <div id="submitSection_sourceDetails" class="input-subgroup hidden">
+          <button class="button" onclick="submitMileage('sourceDetails')">Submit</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="destinationDetails" class="section">
+      <div class="header">
+        <span>Destination Checklist</span>
+      </div>
+      <form action="/Auth/DestinationChecklist/{{id}}" method="post">
+        <label><input type="radio" name="selectType_destinationDetails" value="year" /> Year</label>
+        <label><input type="radio" name="selectType_destinationDetails" value="month" /> Month</label>
+
+        <div id="yearInput_destinationDetails" class="input-subgroup hidden">
+          <label for="year">Year</label>
+          <input type="text" id="input-year_destinationDetails" name="selectedYear" pattern="\d{4}" maxlength="4"
+            placeholder="e.g., 2025" />
+        </div>
+        <div id="monthInput_destinationDetails" class="input-subgroup hidden">
+          <label for="month">Month</label>
+          <input type="month" id="input-month_destinationDetails" name="selectedMonth" />
+        </div>
+
+        <div id="submitSection_destinationDetails" class="input-subgroup hidden">
+          <button class="button" onclick="submitMileage('destinationDetails')">Submit</button>
+        </div>
+      </form>
+    </div>
+    <div class="container">
+      <div class="header">
+        <span>Bus Information</span>
+      </div>
+      <div class="content">
+        {{#if imageUrl}}
+        <img src="{{imageUrl}}" alt="Bus Image" width="132" height="170" style="object-fit:contain; margin-right:5px;">
+        {{else}}
+        <div class="photo">No Image</div>
+        {{/if}}
+        <div class="details">
+          <form>
+            <table border="0">
+              <tr>
+                <td>Bus Number</td>
+                <td>{{Bus_Number}}</td>
+              </tr>
+              <tr>
+                <td>TN Number</td>
+                <td>{{TN_Number}}</td>
+              </tr>
+            </table>
+          </form>
+          <div id="more-info" class="hidden">
+            <form>
+              <table border="0">
+                <tr>
+                  <td>Chasis Number</td>
+                  <td>{{Chasis_Number}}</td>
+                </tr>
+                <tr>
+                  <td>Year of Model</td>
+                  <td>{{Year_of_Model}}</td>
+                </tr>
+                <tr>
+                  <td>Date of Purchase</td>
+                  <td>{{Date_of_Purchase}}</td>
+                </tr>
+                <tr>
+                  <td>Registration Number</td>
+                  <td>{{Registration_Number}}</td>
+                </tr>
+                <tr>
+                  <td>RoadTax Expiry Date</td>
+                  <td>{{RoadTax_Expiry_Date}}</td>
+                </tr>
+                <tr>
+                  <td>FC Number</td>
+                  <td>{{FC_Number}}</td>
+                </tr>
+                <tr>
+                  <td>FC Expiry Date</td>
+                  <td>{{FC_Expiry_Date}}</td>
+                </tr>
+                <tr>
+                  <td>Permit Expiry Date</td>
+                  <td>{{Permit_Expiry_Date}}</td>
+                </tr>
+                <tr>
+                  <td>Insurance Number</td>
+                  <td>{{Insurance_Number}}</td>
+                </tr>
+                <tr>
+                  <td>Insurance Expiry Date</td>
+                  <td>{{Insurance_Expiry_Date}}</td>
+                </tr>
+
+              </table>
+            </form>
+          </div>
+          <button class="button" onclick="toggleInfo()">Show More</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{/with}}
+  <script>
+
+    function toggleInfo() {
+      var info = document.getElementById("more-info");
+      var button = document.querySelector(".content .button");
+      if (info.classList.contains("hidden")) {
+        info.classList.remove("hidden");
+        button.textContent = "Show Less";
+      } else {
+        info.classList.add("hidden");
+        button.textContent = "Show More";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const sectionRadios = document.querySelectorAll('input[name="sectionSelector"]');
+
+      sectionRadios.forEach((radio) => {
+        radio.addEventListener("change", () => {
+          showSection(radio.value);
+        });
+      });
+
+      // Show the default section on page load, if any
+      const defaultSection = document.querySelector('input[name="sectionSelector"]:checked');
+      if (defaultSection) {
+        showSection(defaultSection.value);
+      }
+
+      // Attach listeners for selectType radios inside each section
+      const sections = document.querySelectorAll(".section");
+      sections.forEach((section) => {
+        const radios = section.querySelectorAll('input[type="radio"][name^="selectType_"]');
+        radios.forEach((radio) => {
+          radio.addEventListener("change", () => {
+            handleSelectTypeChange(section.id, radio.value);
+          });
+        });
+      });
+    });
+
+    function showSection(sectionId) {
+      const sections = document.querySelectorAll(".section");
+      sections.forEach((section) => {
+        if (section.id === sectionId) {
+          section.style.display = "block";
+        } else {
+          section.style.display = "none";
+        }
+      });
+    }
+
+    function handleSelectTypeChange(sectionId, selectedValue) {
+      const monthInput = document.getElementById(`monthInput_${sectionId}`);
+      const yearInput = document.getElementById(`yearInput_${sectionId}`);
+      const submitSection = document.getElementById(`submitSection_${sectionId}`);
+
+      if (selectedValue === "month") {
+        monthInput.classList.remove("hidden");
+        yearInput.classList.add("hidden");
+        submitSection.classList.remove("hidden");
+      } else if (selectedValue === "year") {
+        monthInput.classList.add("hidden");
+        yearInput.classList.remove("hidden");
+        submitSection.classList.remove("hidden");
+      } else {
+        monthInput.classList.add("hidden");
+        yearInput.classList.add("hidden");
+        submitSection.classList.add("hidden");
+      }
+    }
+
+    function submitMileage(sectionId) {
+      const selectTypeRadios = document.querySelectorAll(`input[name="selectType_${sectionId}"]`);
+      let selectedValue = null;
+      selectTypeRadios.forEach((radio) => {
+        if (radio.checked) {
+          selectedValue = radio.value;
+        }
+      });
+
+      if (!selectedValue) {
+        alert("Please select Month or Year.");
+        return;
+      }
+
+      let value = null;
+      if (selectedValue === "month") {
+        value = document.getElementById(`input-month_${sectionId}`).value;
+      } else if (selectedValue === "year") {
+        value = document.getElementById(`input-year_${sectionId}`).value;
+      }
+
+      if (!value) {
+        alert("Please select a valid month or year.");
+        return;
+      }
+
+      alert(`Submitted ${sectionId} with ${selectedValue}: ${value}`);
+    }
+
+  </script>
+
+</body>
+
+</html>
