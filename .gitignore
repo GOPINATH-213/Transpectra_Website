@@ -1,4 +1,8 @@
 node_modules/
 .env
 APIService/
+uploads/
+logs/
+.DS_Store
+npm-debug.log
 *.local
